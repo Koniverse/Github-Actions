@@ -73,4 +73,18 @@ jobs:
             Commit message: ${{ github.event.commits[0].message }}
             See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
           document: ./upload.zip
-      # - name: Notify to Discord
+      # === Send notification ===
+      - uses: sarisia/actions-status-discord@v1
+        if: always()
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          status: ${{ job.status }}
+          username: GitHub Actions Notifier
+          title: ${{ github.workflow }}
+          description: |
+            The Deployment has been completed.
+            Netlify URL from: ${{ steps.netlify_deployment.outputs.deploy-url }}
+            Cloudflare URL from: ${{ steps.cloudflare_deployment.outputs.url }}
+            Cloudflare Alias from: ${{ steps.cloudflare_deployment.outputs.alias }}
+            Nextcloud URL from: ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
+          ## content: "Hey <@316911818725392384>"
