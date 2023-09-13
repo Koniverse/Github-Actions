@@ -1,0 +1,25 @@
+name: Scheduler
+on:
+  schedule:
+    - cron: '0 0 0 * *'
+
+jobs:
+  master:
+    runs-on: ubuntu-22.04
+    name: CoinGecko Scheduler
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: coingecko
+          fetch-depth: 0
+          token: ${{ secrets.GH_TOKEN }}
+      - name: Update data
+        run: |
+          yarn install --immutable | grep -v 'YN0013'
+          yarn data:update-price
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: Scheduler
+          author_email: scheduler@github.io
+          message: 'Update data'

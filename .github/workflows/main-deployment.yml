@@ -1,0 +1,76 @@
+name: Push Main
+on:
+  push:
+    branches:
+        - main
+
+jobs:
+  master:
+    if: "! startsWith(github.event.head_commit.message, '[CI Skip]')"
+    runs-on: ubuntu-22.04
+    name: Build and Deploy
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Build
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'yarn'
+      # === Build ===
+      # === Deploy static pages ===
+      - name: Deploy to Netlify
+        id: netlify_deployment
+        uses: nwtgck/actions-netlify@v2.0
+        with:
+          publish-dir: './build'
+          alias: ${{ github.head_ref }}
+          github-token: ${{ secrets.GH_AUTOMATION_TOKEN }}
+          deploy-message: ${{ github.event.head_commit.message }}
+          enable-pull-request-comment: true
+          enable-commit-comment: true
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        timeout-minutes: 1
+      - name: Deploy to Cloudflare Pages
+        id: cloudflare_deployment
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'sw-github-action'
+          gitHubToken: ${{ secrets.GH_AUTOMATION_TOKEN }}
+          branch: ${{ github.event_name == 'pull_request' && format('pr-{0}', github.event.number) || github.ref_name }}
+          directory: './build'
+          wranglerVersion: '3'
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          publish_dir: ./build
+      # === Upload the build ===
+      - name: Nextcloud Upload
+        id: nextcloud_upload
+        uses: trympet/nextcloud-artifacts-action@v2
+        with:
+          name: 'upload-demo'
+          path: 'upload.zip'
+          nextcloud-url: 'https://file.cdmteck.com'
+          nextcloud-username: ${{ secrets.NEXTCLOUD_USERNAME }}
+          nextcloud-password: ${{ secrets.NEXTCLOUD_PASSWORD }}
+      # === Notify to the chat ===
+      - name: Upload to telegram
+        id: telegram_upload
+        uses: appleboy/telegram-action@master
+        with:
+          to: ${{ secrets.TELEGRAM_CLOUD_GROUP_ID }}
+          token: ${{ secrets.TELEGRAM_BOT_API }}
+          message: |
+            ${{ github.actor }} created commit:
+            Repository: ${{ github.repository }}
+            Commit message: ${{ github.event.commits[0].message }}
+            See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
+          document: ./upload.zip
+      # - name: Notify to Discord

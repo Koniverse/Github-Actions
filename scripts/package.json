@@ -1,0 +1,17 @@
+{
+  "name": "github-actions",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/saltict/github-action-test.git",
+  "author": "AnhMTV <maithachvietanh@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "type": "module",
+  "dependencies": {},
+  "devDependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "scripts": {
+    "data:update-price": "node ./scripts/fetch-coingecko.js"
+  }
+}
