@@ -21,6 +21,9 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
+      - name: Set current datetime
+        id: current_datetime
+        run: echo "::set-output name=current_datetime::$(date +'%Y-%m-%d-%H-%M')"
       # === Build ===
       # === Deploy static pages ===
       - name: Deploy to Netlify
@@ -58,7 +61,7 @@ jobs:
         id: nextcloud_upload
         uses: trympet/nextcloud-artifacts-action@v2
         with:
-          name: 'upload-demo'
+          name: 'file-${{ steps.current_datetime.outputs.current_datetime }}'
           path: 'upload.zip'
           nextcloud-url: 'https://file.cdmteck.com'
           nextcloud-username: ${{ secrets.NEXTCLOUD_USERNAME }}
@@ -87,8 +90,9 @@ jobs:
           title: ${{ github.workflow }}
           description: |
             The Deployment has been completed.
-            Netlify URL from: ${{ steps.netlify_deployment.outputs.deploy-url }}
-            Cloudflare URL from: ${{ steps.cloudflare_deployment.outputs.url }}
-            Cloudflare Alias from: ${{ steps.cloudflare_deployment.outputs.alias }}
-            Nextcloud URL from: ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
+            - Netlify URL from: ${{ steps.netlify_deployment.outputs.deploy-url }}
+            - Cloudflare URL:
+              - URL: ${{ steps.cloudflare_deployment.outputs.url }}
+              - Alias: ${{ steps.cloudflare_deployment.outputs.alias }}
+            - Nextcloud Download URL (${{ steps.netlify_deployment.outputs.deploy-url }}): ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
           ## content: "Hey <@316911818725392384>"
