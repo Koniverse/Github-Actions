@@ -1,0 +1,13 @@
+{
+  "name": "github-actions-demo",
+  "version": "1.0.0",
+  "description": "Simple Worflow deployment",
+  "main": "index.js",
+  "repository": "https://github.com/Koniverse/Github-Actions.git",
+  "author": "AnhMTV <maithachvietanh@gmail.com>",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "node-fetch": "^3.3.2"
+  }
+}
