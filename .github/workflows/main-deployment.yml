@@ -51,7 +51,7 @@ jobs:
           github_token: ${{ secrets.GH_AUTOMATION_TOKEN }}
           publish_dir: ./build
       # === Upload the build ===
-      - name: Nextcloud Upload
+      - name: Upload to Nextcloud
         id: nextcloud_upload
         uses: trympet/nextcloud-artifacts-action@v2
         with:
@@ -61,7 +61,7 @@ jobs:
           nextcloud-username: ${{ secrets.NEXTCLOUD_USERNAME }}
           nextcloud-password: ${{ secrets.NEXTCLOUD_PASSWORD }}
       # === Notify to the chat ===
-      - name: Upload to telegram
+      - name: Upload to Telegram
         id: telegram_upload
         uses: appleboy/telegram-action@master
         with:
@@ -74,7 +74,8 @@ jobs:
             See changes: https://github.com/${{ github.repository }}/commit/${{github.sha}}
           document: ./upload.zip
       # === Send notification ===
-      - uses: sarisia/actions-status-discord@v1
+      - name: Notify to Discord
+        uses: sarisia/actions-status-discord@v1
         if: always()
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
