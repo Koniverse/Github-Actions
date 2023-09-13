@@ -87,8 +87,8 @@ jobs:
           title: ${{ github.workflow }}
           description: |
             The Deployment has been completed.
-            Netlify URL from: ${{ steps.netlify_deployment.outputs.deploy-url }}
-            Cloudflare URL from: ${{ steps.cloudflare_deployment.outputs.url }}
-            Cloudflare Alias from: ${{ steps.cloudflare_deployment.outputs.alias }}
-            Nextcloud URL from: ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
+            - Netlify URL from: ${{ steps.netlify_deployment.outputs.deploy-url }}
+            - Cloudflare URL from: ${{ steps.cloudflare_deployment.outputs.url }}
+            - Cloudflare Alias from: ${{ steps.cloudflare_deployment.outputs.alias }}
+            - Nextcloud URL from: ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
           ## content: "Hey <@316911818725392384>"
