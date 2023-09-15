@@ -70,7 +70,7 @@ jobs:
         id: nextcloud_upload
         uses: trympet/nextcloud-artifacts-action@v2
         with:
-          name: '${{ steps.setup_input.outputs.file_name }}.zip'
+          name: ${{ steps.setup_input.outputs.file_name }}
           path: 'upload.zip'
           nextcloud-url: 'https://file.cdmteck.com'
           nextcloud-username: ${{ secrets.NEXTCLOUD_USERNAME }}
