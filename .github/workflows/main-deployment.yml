@@ -29,9 +29,9 @@ jobs:
           ref_without_prefix="${ref_with_prefix#refs/heads/}"
           
           if [[ -n "${{ github.event.pull_request }}" ]]; then
-            echo "pr-${{ github.event.pull_request.number }}-${time_tag}" >> $GITHUB_OUTPUT
+            echo "file_name=pr-${{ github.event.pull_request.number }}-$time_tag" >> $GITHUB_OUTPUT
           else
-            echo "${ref_without_prefix}-${time_tag}" >> $GITHUB_OUTPUT
+            echo "file_name=$ref_without_prefix-$time_tag" >> $GITHUB_OUTPUT
           fi
       # === Build ===
       # === Deploy static pages ===
