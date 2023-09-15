@@ -21,9 +21,15 @@ jobs:
         with:
           node-version: '18'
           cache: 'yarn'
-      - name: Set current datetime
-        id: current_datetime
-        run: echo "::set-output name=current_datetime::$(date +'%Y-%m-%d-%H-%M')"
+      - name: Set Input
+        id: setup_input
+        run: |
+          time_tag="$(date +'%Y-%m-%d_%H-%M')"
+          if [[ -n "${{ github.event.pull_request }}" ]]; then
+            echo "::set-output name=file_name::pr-${{ github.event.pull_request.number }}-${{ time_tag }}"
+          else
+            echo "::set-output name=file_name::${{ github.ref }}-${{ time_tag }}"
+          fi
       # === Build ===
       # === Deploy static pages ===
       - name: Deploy to Netlify
@@ -61,7 +67,7 @@ jobs:
         id: nextcloud_upload
         uses: trympet/nextcloud-artifacts-action@v2
         with:
-          name: 'file-${{ steps.current_datetime.outputs.current_datetime }}'
+          name: '${{ steps.setup_input.outputs.file_name }}.zip'
           path: 'upload.zip'
           nextcloud-url: 'https://file.cdmteck.com'
           nextcloud-username: ${{ secrets.NEXTCLOUD_USERNAME }}
@@ -86,7 +92,7 @@ jobs:
         with:
           webhook: ${{ secrets.DISCORD_WEBHOOK }}
           status: ${{ job.status }}
-          username: GitHub Actions Notifier
+          username: GitHub Actions Test Notifier
           title: ${{ github.workflow }}
           description: |
             The Deployment has been completed.
@@ -94,5 +100,4 @@ jobs:
             - Cloudflare URL:
               - URL: ${{ steps.cloudflare_deployment.outputs.url }}
               - Alias: ${{ steps.cloudflare_deployment.outputs.alias }}
-            - Nextcloud Download URL (${{ steps.netlify_deployment.outputs.deploy-url }}): ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
-          ## content: "Hey <@316911818725392384>"
+            - Nextcloud URL (): ${{ steps.nextcloud_upload.outputs.SHAREABLE_URL }}
