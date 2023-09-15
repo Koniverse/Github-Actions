@@ -26,12 +26,11 @@ jobs:
         run: |
           time_tag="$(date +'%Y-%m-%d_%H-%M')"
           last_commit_hash=$(git rev-parse HEAD)
-          ref=${{ github.ref }}.replace('refs/heads/', '')
           echo "::set-output name=commit_hash::$last_commit_hash"
           if [[ -n "${{ github.event.pull_request }}" ]]; then
             echo "pr-${{ github.event.pull_request.number }}-$last_commit_hash-$time_tag" >> $GITHUB_OUTPUT
           else
-            echo "$ref-$last_commit_hash-$time_tag" >> $GITHUB_OUTPUT
+            echo "${{ github.event.head_ref }}-$last_commit_hash-$time_tag" >> $GITHUB_OUTPUT
           fi
       # === Build ===
       # === Deploy static pages ===
