@@ -25,10 +25,12 @@ jobs:
         id: setup_input
         run: |
           time_tag="$(date +'%Y-%m-%d_%H-%M')"
+          last_commit_hash=$(git rev-parse HEAD)
+          echo "::set-output name=commit_hash::$last_commit_hash"
           if [[ -n "${{ github.event.pull_request }}" ]]; then
-            echo "::set-output name=file_name::pr-${{ github.event.pull_request.number }}-${{ time_tag }}"
+            echo "::set-output name=file_name::pr-${{ github.event.pull_request.number }}-${{ commit_hash }}-${{ time_tag }}"
           else
-            echo "::set-output name=file_name::${{ github.ref }}-${{ time_tag }}"
+            echo "::set-output name=file_name::${{ github.ref }}--${{ commit_hash }}${{ time_tag }}"
           fi
       # === Build ===
       # === Deploy static pages ===
