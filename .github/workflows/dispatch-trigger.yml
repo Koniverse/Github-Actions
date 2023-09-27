@@ -16,4 +16,4 @@ jobs:
 
       - name: Build
         run: |
-          echo "Trigger run for version ${{ github.event.inputs.version }} at {{ JSON.stringify(github.event) }}"
+          echo "Trigger run for version ${{ github.event.inputs.version }} at {{ github.ref_name }}"
