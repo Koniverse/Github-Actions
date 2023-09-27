@@ -7,8 +7,6 @@ on:
         required: true
         default: ''
 
-
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,4 +16,4 @@ jobs:
 
       - name: Build
         run: |
-          echo "Trigger run for version ${{ github.event.inputs.version }} at {{ github.event.ref }}"
+          echo "Trigger run for version ${{ github.event.inputs.version }} at {{ JSON.stringify(github.event) }}"
