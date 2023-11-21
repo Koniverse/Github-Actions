@@ -7,6 +7,8 @@ on:
         required: true
         default: ''
 
+concurrency: ${{ github.workflow }}
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -17,3 +19,9 @@ jobs:
       - name: Build
         run: |
           echo "Trigger run for version ${{ github.event.inputs.version }} at ${{ github.ref_name }}"
+
+      - name: Deploy to Github Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GH_AUTOMATION_TOKEN }}
+          publish_dir: ./build
